@@ -25,6 +25,11 @@ public class CustomerSupportManagerService {
         return customerSupportManagerRepo.save(manager);
     }
 
+    public void setActivityToManager(Long activityId, Long managerId) {
+        Activity activity = activityRepo.getById(activityId);
+        customerSupportManagerRepo.attachActivityToManagerById(activity, managerId);
+    }
+
     public CustomerSupportManager findManagerById(Long id) {
         return customerSupportManagerRepo.getById(id);
     }

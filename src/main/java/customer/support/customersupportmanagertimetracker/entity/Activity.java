@@ -1,5 +1,7 @@
 package customer.support.customersupportmanagertimetracker.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "activities")
 public class Activity {
@@ -35,4 +38,9 @@ public class Activity {
     @OneToMany(mappedBy = "activity")
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Chat> chats;
+
+    @JsonIgnore
+    public CustomerSupportManager getManager() {
+        return manager;
+    }
 }

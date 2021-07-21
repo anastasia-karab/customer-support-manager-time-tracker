@@ -1,32 +1,66 @@
 package customer.support.customersupportmanagertimetracker.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.Duration;
-import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "chats")
 public class Chat {
-    private static final Duration KPI = Duration.ofMinutes(20);
+//    private static final Duration KPI = Duration.ofMinutes(20);
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "activity_id")
     private Activity activity;
 
-    private LocalDateTime startOfTheChat;
-    private LocalDateTime endOfTheChat;
-    private Duration duration;
+    @Temporal(TemporalType.TIMESTAMP)
+    @JsonProperty("startOfTheChat")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "chat_start")
+    private Date startOfTheChat;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @JsonProperty("endOfTheChat")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @Column(name = "chat_end")
+    private Date endOfTheChat;
+
+    private long chatDuration;
+
+    public Chat(Date startOfTheChat, Date endOfTheChat) {
+        this.startOfTheChat = startOfTheChat;
+        this.endOfTheChat = endOfTheChat;
+    }
+
+    @JsonIgnore
+    public Activity getActivity() {
+        return activity;
+    }
+
+    @Temporal(TemporalType.TIME)
+    @JsonProperty("chatDuration")
+    public long getChatDuration() {
+        long diffInMillis = endOfTheChat.getTime() - startOfTheChat.getTime();
+        long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(diffInMillis);
+
+        return diffInMinutes;
+    }
 }

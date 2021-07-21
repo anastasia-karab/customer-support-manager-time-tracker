@@ -21,6 +21,16 @@ public class CustomerSupportManagerResource {
         return customerSupportManagerService.addManager(manager);
     }
 
+    @POST
+    @Consumes("application/json")
+    @Produces("application/json")
+    @Path("/activity/{activityId}/{managerId}")
+    public CustomerSupportManager attachActivityToManager(@PathParam("activityId") Long activityId,
+                                                          @PathParam("managerId") Long managerId) {
+        customerSupportManagerService.setActivityToManager(activityId, managerId);
+        return customerSupportManagerService.findManagerById(managerId);
+    }
+
     @GET
     @Produces("application/json")
     @Path("/{id}")

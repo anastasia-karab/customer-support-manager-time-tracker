@@ -4,10 +4,7 @@ import customer.support.customersupportmanagertimetracker.entity.Call;
 import customer.support.customersupportmanagertimetracker.service.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import java.util.List;
 
 @Path("/call")
@@ -20,5 +17,21 @@ public class CallResource {
     @Path("/all/{id}")
     public List<Call> getAllCallsByActivityId(@PathParam("id") Long id) {
         return activityService.findAllCallsByActivityId(id);
+    }
+
+    @POST
+    @Consumes("application/json")
+    @Produces("application/json")
+    @Path("/new/{id}")
+    public List<Call> addNewCallToActivity(@PathParam("id") Long id, Call call) {
+        activityService.addCallToActivity(id, call);
+        return getAllCallsByActivityId(id);
+    }
+
+    @GET
+    @Produces("application/json")
+    @Path("/{id}")
+    public Call getCallById(@PathParam("id") Long id) {
+        return activityService.findCallById(id);
     }
 }

@@ -71,4 +71,42 @@ public class ActivityService {
 
         return chatsByActivity;
     }
+
+    public void addCallToActivity(Long activityId, Call call) {
+        Activity activity = activityRepo.getById(activityId);
+        call.setActivity(activity);
+
+        List<Call> activityCalls = activity.getCalls();
+        activityCalls.add(call);
+
+        callRepo.save(call);
+    }
+
+    public void addEmailToActivity(Long activityId, Email email) {
+        Activity activity = activityRepo.getById(activityId);
+        email.setActivity(activity);
+
+        List<Email> activityEmails = activity.getEmails();
+        activityEmails.add(email);
+
+        emailRepo.save(email);
+    }
+
+    public void addChatToActivity(Long activityId, Chat chat) {
+        Activity activity = activityRepo.getById(activityId);
+        chat.setActivity(activity);
+
+        List<Chat> activityChats = activity.getChats();
+        activityChats.add(chat);
+
+        chatRepo.save(chat);
+    }
+
+    public Call findCallById(Long id) {
+        return callRepo.getById(id);
+    }
+
+    public Chat findChatById(Long id) { return chatRepo.getById(id); }
+
+    public Email findEmailById(Long id) { return emailRepo.getById(id); }
 }
