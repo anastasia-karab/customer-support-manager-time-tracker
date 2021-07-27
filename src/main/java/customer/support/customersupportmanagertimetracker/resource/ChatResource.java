@@ -2,9 +2,12 @@ package customer.support.customersupportmanagertimetracker.resource;
 
 import customer.support.customersupportmanagertimetracker.entity.Chat;
 import customer.support.customersupportmanagertimetracker.service.ActivityService;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Path("/chat")
@@ -23,9 +26,13 @@ public class ChatResource {
     @Consumes("application/json")
     @Produces("application/json")
     @Path("/new/{id}")
-    public List<Chat> addNewChatToActivity(@PathParam("id") Long id, Chat chat) {
+    public Response addNewChatToActivity(@PathParam("id") Long id, Chat chat) throws JSONException {
         activityService.addChatToActivity(id, chat);
-        return getAllChatsByActivityId(id);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("status", "ok");
+
+        return Response.status(Response.Status.CREATED).entity(jsonObject.toString()).build();
     }
 
     @GET

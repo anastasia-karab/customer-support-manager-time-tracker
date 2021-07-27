@@ -8,10 +8,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 @Entity
 @Table(name = "calls")
 public class Call {
-//    private static final Duration KPI = Duration.ofMinutes(15);
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -43,10 +42,8 @@ public class Call {
     @Column(name = "call_end")
     private Date endOfTheCall;
 
-/*    @Formula(value = "timediff(call_end, call_start)")
-    private Date callDuration;*/
-
-    private long callDuration;
+    @Formula(value = "TIME_TO_SEC(timediff(call_end, call_start)) / 60")
+    private float callDuration;
 
     public Call(Date startOfTheCall, Date endOfTheCall) {
         this.startOfTheCall = startOfTheCall;
@@ -56,14 +53,5 @@ public class Call {
     @JsonIgnore
     public Activity getActivity() {
         return activity;
-    }
-
-    @Temporal(TemporalType.TIME)
-    @JsonProperty("callDuration")
-    public long getCallDuration() {
-        long diffInMillis = endOfTheCall.getTime() - startOfTheCall.getTime();
-        long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(diffInMillis);
-
-        return diffInMinutes;
     }
 }

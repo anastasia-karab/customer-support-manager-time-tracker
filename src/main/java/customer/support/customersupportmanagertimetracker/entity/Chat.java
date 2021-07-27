@@ -8,10 +8,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 @Entity
 @Table(name = "chats")
 public class Chat {
-//    private static final Duration KPI = Duration.ofMinutes(20);
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -43,7 +42,8 @@ public class Chat {
     @Column(name = "chat_end")
     private Date endOfTheChat;
 
-    private long chatDuration;
+    @Formula(value = "TIME_TO_SEC(timediff(chat_end, chat_start)) / 60")
+    private float chatDuration;
 
     public Chat(Date startOfTheChat, Date endOfTheChat) {
         this.startOfTheChat = startOfTheChat;
@@ -53,14 +53,5 @@ public class Chat {
     @JsonIgnore
     public Activity getActivity() {
         return activity;
-    }
-
-    @Temporal(TemporalType.TIME)
-    @JsonProperty("chatDuration")
-    public long getChatDuration() {
-        long diffInMillis = endOfTheChat.getTime() - startOfTheChat.getTime();
-        long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(diffInMillis);
-
-        return diffInMinutes;
     }
 }

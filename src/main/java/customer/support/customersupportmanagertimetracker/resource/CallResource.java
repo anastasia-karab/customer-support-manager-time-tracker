@@ -2,9 +2,12 @@ package customer.support.customersupportmanagertimetracker.resource;
 
 import customer.support.customersupportmanagertimetracker.entity.Call;
 import customer.support.customersupportmanagertimetracker.service.ActivityService;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Path("/call")
@@ -23,9 +26,13 @@ public class CallResource {
     @Consumes("application/json")
     @Produces("application/json")
     @Path("/new/{id}")
-    public List<Call> addNewCallToActivity(@PathParam("id") Long id, Call call) {
+    public Response addNewCallToActivity(@PathParam("id") Long id, Call call) throws JSONException {
         activityService.addCallToActivity(id, call);
-        return getAllCallsByActivityId(id);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("status", "ok");
+
+        return Response.status(Response.Status.CREATED).entity(jsonObject.toString()).build();
     }
 
     @GET
