@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.time.Month;
 import java.util.List;
 
 @Path("/call")
@@ -40,5 +41,22 @@ public class CallResource {
     @Path("/{id}")
     public Call getCallById(@PathParam("id") Long id) {
         return activityService.findCallById(id);
+    }
+
+    @GET
+    @Produces("application/json")
+    @Path("/average/duration/{activityId}/{month}/{year}")
+    public Response calculateAverageCallDuration(@PathParam("activityId") Long activityId,
+                                   @PathParam("month") int month,
+                                   @PathParam("year") int year) throws JSONException {
+        float avgMonthCallDuration = activityService
+                .getAverageCallDurationForMonthByActivity(activityId, month, year);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("period", Month.of(month) + ", " + year);
+        jsonObject.put("average_duration", String.format("%.2f", avgMonthCallDuration));
+        jsonObject.put("kpi_met", activityService.callKPIMet(avgMonthCallDuration));
+
+        return Response.status(Response.Status.OK).entity(jsonObject.toString()).build();
     }
 }

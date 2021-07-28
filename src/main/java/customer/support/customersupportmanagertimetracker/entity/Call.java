@@ -21,6 +21,7 @@ import java.util.Date;
 @Entity
 @Table(name = "calls")
 public class Call {
+    public static final float CALL_MAX_KPI = 10f;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
