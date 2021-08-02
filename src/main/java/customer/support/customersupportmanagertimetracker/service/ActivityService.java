@@ -107,36 +107,4 @@ public class ActivityService {
 
         chatRepo.save(chat);
     }
-
-    public Call findCallById(Long id) {
-        return callRepo.getById(id);
-    }
-
-    public Chat findChatById(Long id) { return chatRepo.getById(id); }
-
-    public Email findEmailById(Long id) { return emailRepo.getById(id); }
-
-    public float getAverageCallDurationForMonthByActivity(Long activityId, int month, int year) {
-        List<Call> allCallsByActivityId = findAllCallsByActivityId(activityId);
-
-        List<Call> monthCalls = new ArrayList<>();
-        float sum = 0;
-        for (Call c : allCallsByActivityId) {
-            Date callDate = c.getStartOfTheCall();
-            LocalDate localCallDate = callDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            if (month == localCallDate.getMonthValue() && year == localCallDate.getYear()) {
-                sum += c.getCallDuration();
-                monthCalls.add(c);
-            }
-        }
-
-        return sum / monthCalls.size();
-    }
-
-    public boolean callKPIMet(float avgCallDuration) {
-        if (avgCallDuration < CALL_MAX_KPI) {
-            return true;
-        }
-        return false;
-    }
 }

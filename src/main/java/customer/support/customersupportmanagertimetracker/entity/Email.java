@@ -21,6 +21,7 @@ import java.util.Date;
 @Entity
 @Table(name = "emails")
 public class Email {
+    public static final float EMAIL_MAX_KPI = 15f;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

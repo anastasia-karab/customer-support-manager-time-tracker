@@ -21,6 +21,7 @@ import java.util.Date;
 @Entity
 @Table(name = "chats")
 public class Chat {
+    public static final float CHAT_MAX_KPI = 20f;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -2,18 +2,26 @@ package customer.support.customersupportmanagertimetracker.resource;
 
 import customer.support.customersupportmanagertimetracker.entity.Email;
 import customer.support.customersupportmanagertimetracker.service.ActivityService;
+import customer.support.customersupportmanagertimetracker.service.EmailService;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.time.Month;
 import java.util.List;
 
 @Path("/email")
 public class EmailResource {
-    @Autowired
     ActivityService activityService;
+    EmailService emailService;
+
+    @Autowired
+    public EmailResource(ActivityService activityService, EmailService emailService) {
+        this.activityService = activityService;
+        this.emailService = emailService;
+    }
 
     @GET
     @Produces("application/json")
@@ -39,6 +47,23 @@ public class EmailResource {
     @Produces("application/json")
     @Path("/{id}")
     public Email getEmailById(@PathParam("id") Long id) {
-        return activityService.findEmailById(id);
+        return emailService.findEmailById(id);
+    }
+
+    @GET
+    @Produces("application/json")
+    @Path("/average/duration/{activityId}/{month}/{year}")
+    public Response calculateAverageEmailDuration(@PathParam("activityId") Long activityId,
+                                                 @PathParam("month") int month,
+                                                 @PathParam("year") int year) throws JSONException {
+        float avgMonthEmailDuration = emailService
+                .getAverageEmailDurationForMonthByActivity(activityId, month, year);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("period", Month.of(month) + ", " + year);
+        jsonObject.put("average_duration", String.format("%.2f", avgMonthEmailDuration));
+        jsonObject.put("kpi_met", emailService.emailKPIMet(avgMonthEmailDuration));
+
+        return Response.status(Response.Status.OK).entity(jsonObject.toString()).build();
     }
 }
